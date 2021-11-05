@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import styles from './styles';
 
 //importing icons
@@ -16,8 +15,12 @@ export default class TitleBar extends Component {
       minimizeBtnHover: false,
       maximizeBtnHover: false,
       restoreBtnHover: false,
-      windowMax: true,
+      windowMax: false,
     };
+  }
+
+  closeWindow() {
+    window.ipcRenderer.send('closeWindow');
   }
 
   render() {
@@ -25,6 +28,7 @@ export default class TitleBar extends Component {
       <div className="draggable" style={styles.titleBar}>
         <div className="nonDraggable" style={styles.contentContainer}>
           <div
+            id="titleBarCloseBtn"
             style={{
               backgroundColor: this.state.minimizeBtnHover
                 ? '#383B41'
@@ -64,8 +68,8 @@ export default class TitleBar extends Component {
             >
               <RestoreIcon
                 width={26}
-                style={styles.iconStyle}
-                height={26}
+                style={{ ...styles.iconStyle, marginTop: 2.5 }}
+                height={23}
                 color="#f0f2f5"
               />
             </div>
@@ -86,9 +90,9 @@ export default class TitleBar extends Component {
               }}
             >
               <MaximizeIcon
-                style={styles.iconStyle}
+                style={{ ...styles.iconStyle, marginTop: 2.5 }}
                 width={26}
-                height={26}
+                height={23}
                 color="#f0f2f5"
               />
             </div>
@@ -106,6 +110,7 @@ export default class TitleBar extends Component {
             onMouseLeave={() => {
               this.setState({ closeBtnHover: false });
             }}
+            onClick={() => this.closeWindow()}
           >
             <CloseIcon width={28} height={28} color="#f0f2f5" />
           </div>

@@ -71,11 +71,16 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
+    minWidth: 940,
+    minHeight: 560,
     frame: false,
     icon: getAssetPath('icon.png'),
     titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true,
+      contextIsolation: false,
+      preload: __dirname + '/preload.js',
     },
   });
 
@@ -104,9 +109,11 @@ const createWindow = async () => {
   });
 };
 
-/**
- * Add event listeners...
- */
+// Adding IPC Event Listeners
+
+ipcMain.on('closeWindow', () => {
+  console.log('window close');
+});
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
