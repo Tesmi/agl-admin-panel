@@ -5,6 +5,8 @@ body {
 }
 .draggable {
   -webkit-app-region: drag;
+  -webkit-user-select: none;
 }
 .nonDraggable {
+  -webkit-app-region: no-drag;
 }
