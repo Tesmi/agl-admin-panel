@@ -102,6 +102,26 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
+  // mainWindow.on('maximize', () => {
+  //   console.log('maximize');
+  //   mainWindow?.webContents.send('show-restore-icon');
+  // });
+
+  // mainWindow.on('unmaximize', () => {
+  //   console.log('unmaximize');
+  //   mainWindow?.webContents.send('show-maximize-icon');
+  // });
+
+  // mainWindow.on('enter-full-screen', () => {
+  //   console.log('enter-full-screen');
+  //   mainWindow?.webContents.send('show-restore-icon');
+  // });
+
+  // mainWindow.on('leave-full-screen', () => {
+  //   console.log('leave-full-screen');
+  //   mainWindow?.webContents.send('show-maximize-icon');
+  // });
+
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
@@ -111,8 +131,21 @@ const createWindow = async () => {
 
 // Adding IPC Event Listeners
 
-ipcMain.on('closeWindow', () => {
-  console.log('window close');
+ipcMain.on('close-window', async () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+ipcMain.on('minimize-window', async () => {
+  if (mainWindow) mainWindow.minimize();
+});
+
+ipcMain.on('maximize-or-restore-window', async () => {
+  if (mainWindow) {
+    if (mainWindow.isMaximized()) mainWindow.restore();
+    else mainWindow.maximize();
+  }
 });
 
 app.on('window-all-closed', () => {
