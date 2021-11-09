@@ -102,26 +102,6 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  // mainWindow.on('maximize', () => {
-  //   console.log('maximize');
-  //   mainWindow?.webContents.send('show-restore-icon');
-  // });
-
-  // mainWindow.on('unmaximize', () => {
-  //   console.log('unmaximize');
-  //   mainWindow?.webContents.send('show-maximize-icon');
-  // });
-
-  // mainWindow.on('enter-full-screen', () => {
-  //   console.log('enter-full-screen');
-  //   mainWindow?.webContents.send('show-restore-icon');
-  // });
-
-  // mainWindow.on('leave-full-screen', () => {
-  //   console.log('leave-full-screen');
-  //   mainWindow?.webContents.send('show-maximize-icon');
-  // });
-
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();

@@ -48,7 +48,6 @@ export default class TitleBar extends Component {
   }
 
   maxOrRestoreWindow() {
-    // this.setState({ windowMax: !this.state.windowMax });
     window.ipcRenderer.send('maximize-or-restore-window');
   }
 
