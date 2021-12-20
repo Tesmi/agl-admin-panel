@@ -10,6 +10,7 @@ import CloseIcon from './CloseIcon';
 import MaximizeIcon from './MaximizeIcon';
 import RestoreIcon from './RestoreIcon';
 import MinimizeIcon from './MinimizeIcon';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const currentWindow = window.remote.getCurrentWindow();
 
@@ -54,14 +55,23 @@ export default class TitleBar extends Component {
   render() {
     return (
       <div className="draggable" style={styles.titleBar}>
+        <MenuIcon
+          color="#f0f2f5"
+          className="nonDraggable"
+          style={styles.hamIcon}
+          onClick={() => this.props.toggleSidebar()}
+        />
+        <center>
+          <p style={styles.title}>AGL LEARNING - ADMIN PANEL</p>
+        </center>
         <div className="nonDraggable" style={styles.contentContainer}>
           <div
             title="Minimize"
             id="titleBarCloseBtn"
             style={{
               backgroundColor: this.state.minimizeBtnHover
-                ? '#383B41'
-                : '#21252B',
+                ? '#3a85cf'
+                : '#1976D2',
               cursor: this.state.minimizeBtnHover ? 'pointer' : null,
               ...styles.iconContainer,
             }}
@@ -85,8 +95,8 @@ export default class TitleBar extends Component {
               title="Restore"
               style={{
                 backgroundColor: this.state.restoreBtnHover
-                  ? '#383B41'
-                  : '#21252B',
+                  ? '#3a85cf'
+                  : '#1976D2',
                 cursor: this.state.restoreBtnHover ? 'pointer' : null,
                 ...styles.iconContainer,
               }}
@@ -99,9 +109,9 @@ export default class TitleBar extends Component {
               onClick={() => this.maxOrRestoreWindow()}
             >
               <RestoreIcon
-                width={26}
+                width={28}
                 style={{ ...styles.iconStyle, marginTop: 2.5 }}
-                height={23}
+                height={25}
                 color="#f0f2f5"
               />
             </div>
@@ -110,8 +120,8 @@ export default class TitleBar extends Component {
               title="Maximize"
               style={{
                 backgroundColor: this.state.maximizeBtnHover
-                  ? '#383B41'
-                  : '#21252B',
+                  ? '#3a85cf'
+                  : '#1976D2',
                 cursor: this.state.maximizeBtnHover ? 'pointer' : null,
                 ...styles.iconContainer,
               }}
@@ -125,8 +135,8 @@ export default class TitleBar extends Component {
             >
               <MaximizeIcon
                 style={{ ...styles.iconStyle, marginTop: 2.5 }}
-                width={26}
-                height={23}
+                width={28}
+                height={25}
                 color="#f0f2f5"
               />
             </div>
@@ -135,7 +145,7 @@ export default class TitleBar extends Component {
           <div
             title="Close"
             style={{
-              backgroundColor: this.state.closeBtnHover ? '#D41323' : '#21252B',
+              backgroundColor: this.state.closeBtnHover ? '#D41323' : '#1976D2',
               cursor: this.state.closeBtnHover ? 'pointer' : null,
               ...styles.closeBtnContainer,
             }}
