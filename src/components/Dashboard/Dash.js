@@ -13,12 +13,10 @@ export default class dash extends Component {
       <div
         style={{
           ...styles.container,
-          width: this.props.drawerState
-            ? `calc(100% - 280px)`
-            : `calc(100% - 5px)`,
+          width: this.props.drawerState ? `calc(100% - 275px)` : `calc(100%)`,
         }}
       >
-        <h1>test</h1>
+        <h1>Dashboard</h1>
       </div>
     );
   }

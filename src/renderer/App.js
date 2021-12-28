@@ -6,12 +6,13 @@ import TitleBar from 'components/TitleBar/TitleBar';
 import SideBar from 'components/Sidebar/Sidebar';
 
 import Dash from 'components/Dashboard/Dash';
+import Users from 'components/Users/Users';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      openDrawer: false,
+      openDrawer: true,
     };
   }
 
@@ -31,8 +32,14 @@ export default class App extends React.Component {
         />
         <Switch>
           <Route
-            path="/"
+            exact
+            path="/xyz"
             component={() => <Dash drawerState={this.state.openDrawer} />}
+          />
+          <Route
+            exact
+            path="/"
+            component={() => <Users drawerState={this.state.openDrawer} />}
           />
         </Switch>
       </Router>
