@@ -7,6 +7,7 @@ import SideBar from 'components/Sidebar/Sidebar';
 
 import Dash from 'components/Dashboard/Dash';
 import Users from 'components/Users/Users';
+import Keys from 'components/Keys/Keys';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -38,8 +39,13 @@ export default class App extends React.Component {
           />
           <Route
             exact
-            path="/"
+            path="/users"
             component={() => <Users drawerState={this.state.openDrawer} />}
+          />
+          <Route
+            exact
+            path="/"
+            component={() => <Keys drawerState={this.state.openDrawer} />}
           />
         </Switch>
       </Router>

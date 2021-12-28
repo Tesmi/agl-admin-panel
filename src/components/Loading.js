@@ -22,7 +22,7 @@ const styles = {
 
   loadingTxt: {
     marginLeft: 10,
-    fontWeight: 'bold',
-    fontSize: 16,
+    color: '#1976D2',
+    fontSize: 20,
   },
 };

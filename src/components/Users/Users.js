@@ -24,6 +24,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import Loading from '../Loading';
 
 async function getAllData() {
+  this.setState({ loading: true });
+
   const head = {
     headers: {
       authorization: `token ${config.ACCESS_TOKEN_ADMIN}`,
@@ -43,10 +45,10 @@ async function getAllData() {
           filteredData: e.data.data.users,
         });
       }
-      this.state.loading = false;
+      this.setState({ loading: false });
     })
     .catch((err) => {
-      this.state.loading = false;
+      this.setState({ loading: false });
       alert('Network Error! Try again later...');
     });
 }
