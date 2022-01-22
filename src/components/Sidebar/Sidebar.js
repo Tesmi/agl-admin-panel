@@ -34,48 +34,48 @@ const drawerItems = [
     text: 'Dashboard',
     icon: <Home />,
     selected: true,
-    route: '/',
+    route: 'dash',
   },
   {
     text: 'Users',
     icon: <Group />,
-    route: '/users',
+    route: 'users',
   },
   {
     text: 'Keys',
     icon: <VpnKey />,
-    route: '/keys',
+    route: 'keys',
   },
   {
     text: 'Classes',
     icon: <School />,
-    route: '/classes',
+    route: 'classes',
   },
   {
     text: 'Files',
     icon: <PictureAsPdf />,
-    route: '/files',
+    route: 'files',
   },
   {
     text: 'Recordings',
     icon: <LiveTv />,
-    route: '/recordings',
+    route: 'recordings',
   },
   {
     text: 'Recycle Content',
     icon: <DeleteSweep />,
-    route: '/recycle',
+    route: 'recycle',
   },
   {
     text: 'Notifications',
     icon: <NotificationsActive />,
-    route: '/notifications',
+    route: 'notifications',
   },
-  {
-    text: 'Change Passwords',
-    icon: <PhonelinkLock />,
-    route: '/password',
-  },
+  // {
+  //   text: 'Change Passwords',
+  //   icon: <PhonelinkLock />,
+  //   route: 'password',
+  // },
 ];
 
 const Sidebar = (props) => {
@@ -91,20 +91,16 @@ const Sidebar = (props) => {
 
         <List disablePadding style={{ width: drawerWidth, paddingTop: 16 }}>
           {drawerItems.map((item, key) => (
-            <Link
+            <ListItem
               key={key}
-              to={item.route}
-              style={{ color: 'inherit', textDecoration: 'inherit' }}
+              button
+              onClick={(e) => {
+                props.changeRoute(item.route);
+              }}
             >
-              <ListItem
-                button
-                // onMouseEnter={(e) => console.log(e.target)}
-                // onMouseLeave={() => null}
-              >
-                <ListItemIcon className="listIcon" children={item.icon} />
-                <ListItemText className="listTxt" primary={item.text} />
-              </ListItem>
-            </Link>
+              <ListItemIcon className="listIcon" children={item.icon} />
+              <ListItemText className="listTxt" primary={item.text} />
+            </ListItem>
           ))}
         </List>
       </Drawer>

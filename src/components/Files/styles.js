@@ -20,33 +20,19 @@ const styles = {
     borderRadius: 8,
     backgroundColor: '#fefefe',
   },
-  statsContainer: {
+  searchContainer: {
+    backgroundColor: '#fefefe',
+    marginBottom: 16,
+    padding: 8,
+    borderRadius: 6,
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  tableContainer: {
     backgroundColor: '#fefefe',
     borderRadius: 6,
     padding: 5,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-  },
-  heading: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: 'teal',
-  },
-  userStatsContainer: {
-    marginTop: 20,
-    backgroundColor: '#fefefe',
-    borderRadius: 6,
-    padding: 5,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-  },
-  noOfUsers: {
-    fontSize: 24,
-    color: 'violet',
-    fontWeight: 'bold',
-    marginLeft: 50,
+    height: '100%',
   },
 };
 

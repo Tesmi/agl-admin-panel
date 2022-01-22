@@ -23,127 +23,6 @@ import SaveIcon from '@mui/icons-material/Save';
 
 import Loading from '../Loading';
 
-async function getAllData() {
-  this.setState({ loading: true });
-
-  const head = {
-    headers: {
-      authorization: `token ${config.ACCESS_TOKEN_ADMIN}`,
-    },
-  };
-
-  await axios
-    .get(`${config.uri}/admin/sendAllKeys`, head)
-    .then((e) => {
-      for (var i = 0, l = e.data.data.keys.length; i < l; i++) {
-        let date = e.data.data.keys[i].UsedDate;
-        if (date != 'N/A')
-          e.data.data.keys[i].UsedDate = new Date(parseInt(date)).toUTCString();
-      }
-
-      this.setState({
-        data: e.data.data.keys,
-        filteredData: e.data.data.keys,
-      });
-
-      this.setState({ loading: false });
-    })
-    .catch((err) => {
-      this.setState({ loading: false });
-      alert('Network Error! Try again later...');
-    });
-}
-
-async function deleteKey() {
-  this.setState({ deleteKeyDialogOpen: false });
-  this.setState({ deleteBtnDisabled: true });
-
-  let token = this.state.keyToBeDeleted;
-
-  const head = {
-    headers: {
-      authorization: `token ${config.ACCESS_TOKEN_ADMIN}`,
-    },
-    params: {
-      token,
-    },
-  };
-
-  await axios
-    .get(`${config.uri}/admin/deleteKey`, head)
-    .then((e) => {
-      if (e.data == 'success') {
-        alert('Key Deleted Successfully!');
-        getAllData();
-      } else {
-        alert('Something went wrong, try again later!');
-      }
-      this.setState({ deleteBtnDisabled: false });
-    })
-    .catch((err) => {
-      this.setState({ deleteBtnDisabled: false });
-      alert('Network Error! Try again later...');
-    });
-}
-
-function searchDebounce(txt) {
-  let timeout;
-  let delay = 300;
-  if (timeout) clearTimeout(timeout);
-  timeout = setTimeout(function () {
-    performSearch(txt);
-  }, delay);
-}
-
-async function generateToken() {
-  let numOfKeys = parseInt(this.state.newKeysAmount);
-  if (!numOfKeys) return alert('Number of keys is invalid');
-  if (numOfKeys < 1 || numOfKeys > 99) {
-    return alert('Number of keys is invalid');
-  }
-
-  this.setState({ showLoadingButton: true });
-
-  const head = {
-    headers: {
-      authorization: `token ${config.ACCESS_TOKEN_ADMIN}`,
-    },
-  };
-
-  let data = { amount: numOfKeys };
-
-  await axios
-    .post(`${config.uri}/admin/generateTokens`, data, head)
-    .then((e) => {
-      if (e.data.status == 'done') {
-        this.setState({ showLoadingButton: false });
-        getAllData();
-        return alert('Keys created successfully!');
-        //success
-      } else {
-        this.setState({ showLoadingButton: false });
-        return alert('Something went wrong, try again later.');
-      }
-    })
-    .catch((err) => {
-      this.setState({ showLoadingButton: false });
-      return alert('Something went wrong, try again later.');
-    });
-}
-
-function performSearch(query) {
-  let txt = query.toLowerCase();
-  let filteredData = this.state.data.filter(function (item) {
-    return (
-      item.token.toLowerCase().includes(txt) ||
-      item.Status.toLowerCase().includes(txt) ||
-      item.UsedBy.toLowerCase().includes(txt) ||
-      item.UsedDate.toLowerCase().includes(txt)
-    );
-  });
-  this.setState({ filteredData });
-}
-
 export default class Keys extends Component {
   constructor(props) {
     super(props);
@@ -158,15 +37,131 @@ export default class Keys extends Component {
       newKeysAmount: 0,
       showLoadingButton: false,
     };
-
-    getAllData = getAllData.bind(this);
-    deleteKey = deleteKey.bind(this);
-    performSearch = performSearch.bind(this);
-    generateToken = generateToken.bind(this);
   }
 
   componentDidMount() {
-    getAllData();
+    this.setState({ loading: true });
+    this.getAllData();
+  }
+
+  async deleteKey() {
+    this.setState({ deleteKeyDialogOpen: false });
+    this.setState({ deleteBtnDisabled: true });
+
+    let token = this.state.keyToBeDeleted;
+
+    const head = {
+      headers: {
+        authorization: `token ${config.ACCESS_TOKEN_ADMIN}`,
+      },
+      params: {
+        token,
+      },
+    };
+
+    await axios
+      .get(`${config.uri}/admin/deleteKey`, head)
+      .then((e) => {
+        if (e.data == 'success') {
+          alert('Key Deleted Successfully!');
+          this.getAllData();
+        } else {
+          alert('Something went wrong, try again later!');
+        }
+        this.setState({ deleteBtnDisabled: false });
+      })
+      .catch((err) => {
+        this.setState({ deleteBtnDisabled: false });
+        alert('Network Error! Try again later...');
+      });
+  }
+
+  searchDebounce(txt) {
+    let timeout;
+    let delay = 300;
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      this.performSearch(txt);
+    }, delay);
+  }
+
+  async generateToken() {
+    let numOfKeys = parseInt(this.state.newKeysAmount);
+    if (!numOfKeys) return alert('Number of keys is invalid');
+    if (numOfKeys < 1 || numOfKeys > 99) {
+      return alert('Number of keys is invalid');
+    }
+
+    this.setState({ showLoadingButton: true });
+
+    const head = {
+      headers: {
+        authorization: `token ${config.ACCESS_TOKEN_ADMIN}`,
+      },
+    };
+
+    let data = { amount: numOfKeys };
+
+    await axios
+      .post(`${config.uri}/admin/generateTokens`, data, head)
+      .then((e) => {
+        if (e.data.status == 'done') {
+          this.setState({ showLoadingButton: false });
+          this.getAllData();
+          return alert('Keys created successfully!');
+          //success
+        } else {
+          this.setState({ showLoadingButton: false });
+          return alert('Something went wrong, try again later.');
+        }
+      })
+      .catch((err) => {
+        this.setState({ showLoadingButton: false });
+        return alert('Something went wrong, try again later.');
+      });
+  }
+
+  performSearch(query) {
+    let txt = query.toLowerCase();
+    let filteredData = this.state.data.filter(function (item) {
+      return (
+        item.token.toLowerCase().includes(txt) ||
+        item.Status.toLowerCase().includes(txt) ||
+        item.UsedBy.toLowerCase().includes(txt) ||
+        item.UsedDate.toLowerCase().includes(txt)
+      );
+    });
+    this.setState({ filteredData });
+  }
+
+  async getAllData() {
+    this.setState({ loading: true, data: [], filteredData: [] });
+    const head = {
+      headers: {
+        authorization: `token ${config.ACCESS_TOKEN_ADMIN}`,
+      },
+    };
+
+    await axios
+      .get(`${config.uri}/admin/sendAllKeys`, head)
+      .then((e) => {
+        for (var i = 0, l = e.data.data.keys.length; i < l; i++) {
+          let date = e.data.data.keys[i].UsedDate;
+          if (date != 'N/A')
+            e.data.data.keys[i].UsedDate = new Date(
+              parseInt(date)
+            ).toUTCString();
+        }
+        this.setState({
+          data: e.data.data.keys,
+          filteredData: e.data.data.keys,
+        });
+        this.setState({ loading: false });
+      })
+      .catch((err) => {
+        this.setState({ loading: false });
+        alert('Network Error! Try again later...');
+      });
   }
 
   render() {
@@ -231,7 +226,7 @@ export default class Keys extends Component {
               >
                 Cancel
               </Button>
-              <Button onClick={() => deleteKey()} autoFocus>
+              <Button onClick={() => this.deleteKey()} autoFocus>
                 Delete
               </Button>
             </DialogActions>
@@ -281,9 +276,11 @@ export default class Keys extends Component {
         }}
       >
         {deleteKeyDialog()}
-        {this.state.loading && <Loading />}
-        {!this.state.loading && (
-          <>
+
+        {this.state.loading ? (
+          <Loading />
+        ) : (
+          <div>
             <div>
               <p style={styles.headerTxt}>Generate new keys</p>
               <div style={styles.generateKeysContainer}>
@@ -310,7 +307,7 @@ export default class Keys extends Component {
                 ) : (
                   <Button
                     style={{ marginLeft: 20 }}
-                    onClick={() => generateToken()}
+                    onClick={() => this.generateToken()}
                     variant="contained"
                   >
                     Generate
@@ -322,10 +319,10 @@ export default class Keys extends Component {
               <p style={styles.headerTxt}>All keys</p>
               <div style={styles.searchContainer}>
                 <TextField
-                  onChange={(e) => searchDebounce(e.target.value)}
+                  onChange={(e) => this.searchDebounce(e.target.value)}
                   size="small"
                   fullWidth
-                  label="Search Users"
+                  label="Search Keys"
                   InputProps={{
                     endAdornment: (
                       <InputAdornment>
@@ -337,16 +334,18 @@ export default class Keys extends Component {
                   }}
                 />
               </div>
+
               <div style={styles.tableContainer}>
                 <DataGrid
                   rows={this.state.filteredData}
                   columns={columns}
                   getRowId={(row) => row._id}
                   pageSize={100}
-                  rowsPerPageOptions={[5]}
+                  rowsPerPageOptions={[15, 50, 100]}
                   autoHeight={true}
                   disableSelectionOnClick
                 />
+
                 <Snackbar
                   open={this.state.openSnackbar}
                   autoHideDuration={4000}
@@ -355,7 +354,7 @@ export default class Keys extends Component {
                 />
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     );

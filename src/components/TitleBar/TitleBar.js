@@ -55,12 +55,12 @@ export default class TitleBar extends Component {
   render() {
     return (
       <div className="draggable" style={styles.titleBar}>
-        {/* <MenuIcon
+        <MenuIcon
           color="#f0f2f5"
           className="nonDraggable"
           style={styles.hamIcon}
           onClick={() => this.props.toggleSidebar()}
-        /> */}
+        />
         <center>
           <p style={styles.title}>AGL LEARNING - ADMIN PANEL</p>
         </center>

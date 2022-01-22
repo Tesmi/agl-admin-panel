@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { CircularProgress } from '@mui/material';
 
 import styles from './styles';
 import axios from 'axios';
@@ -23,119 +22,6 @@ import { DataGrid } from '@mui/x-data-grid';
 
 import Loading from '../Loading';
 
-async function getAllData() {
-  this.setState({ loading: true });
-
-  const head = {
-    headers: {
-      authorization: `token ${config.ACCESS_TOKEN_ADMIN}`,
-    },
-  };
-
-  await axios
-    .get(`${config.uri}/admin/sendAllUsers`, head)
-    .then((e) => {
-      if (e.data.data.users) {
-        for (var i = 0, l = e.data.data.users.length; i < l; i++) {
-          let date = e.data.data.users[i].CreatedOn;
-          e.data.data.users[i].CreatedOn = new Date(date).toUTCString();
-        }
-        this.setState({
-          data: e.data.data.users,
-          filteredData: e.data.data.users,
-        });
-      }
-      this.setState({ loading: false });
-    })
-    .catch((err) => {
-      this.setState({ loading: false });
-      alert('Network Error! Try again later...');
-    });
-}
-
-async function deleteUser() {
-  this.setState({ deleteUserDialogState: false });
-  this.setState({ deleteBtnDisabled: true });
-
-  let id = this.state.userToBeDeleted;
-
-  const head = {
-    headers: {
-      authorization: `token ${config.ACCESS_TOKEN_ADMIN}`,
-    },
-    params: {
-      id,
-    },
-  };
-
-  await axios
-    .get(`${config.uri}/admin/deleteUser`, head)
-    .then((e) => {
-      if (e.data == 'success') {
-        alert('User Deleted Successfully!');
-        getAllData();
-      } else {
-        alert('Something went wrong, try again later!');
-      }
-      this.setState({ deleteBtnDisabled: false });
-    })
-    .catch((err) => {
-      this.setState({ deleteBtnDisabled: false });
-      alert('Network Error! Try again later...');
-    });
-}
-
-function searchDebounce(txt) {
-  let timeout;
-  let delay = 300;
-  if (timeout) clearTimeout(timeout);
-  timeout = setTimeout(function () {
-    performSearch(txt);
-  }, delay);
-}
-
-function performSearch(query) {
-  let txt = query.toLowerCase();
-  let filteredData = this.state.data.filter(function (item) {
-    return (
-      item.FullName.toLowerCase().includes(txt) ||
-      item.UserName.toLowerCase().includes(txt) ||
-      item.Email.toLowerCase().includes(txt) ||
-      item.Contact.toLowerCase().includes(txt) ||
-      item.Gender.toLowerCase().includes(txt) ||
-      item.AccountType.toLowerCase().includes(txt) ||
-      (item.Board && item.Board.toLowerCase().includes(txt)) ||
-      (item.Grade && item.Grade.toString().toLowerCase().includes(txt)) ||
-      item.CreatedOn.toLowerCase().includes(txt)
-    );
-  });
-  this.setState({ filteredData });
-}
-
-function filterData() {
-  if (this.state.onlyTeacher && this.state.onlyStudent) {
-    let filteredData = this.state.data.filter(function (item) {
-      return item.AccountType == 'teacher' || item.AccountType == 'student';
-    });
-    this.setState({ filteredData });
-  } else if (this.state.onlyTeacher && !this.state.onlyStudent) {
-    let filteredData = this.state.data.filter(function (item) {
-      return item.AccountType == 'teacher';
-    });
-    this.setState({ filteredData });
-  } else if (!this.state.onlyTeacher && this.state.onlyStudent) {
-    let filteredData = this.state.data.filter(function (item) {
-      return item.AccountType == 'student';
-    });
-    this.setState({ filteredData });
-  } else {
-    let filteredData = this.state.data.filter(function (item) {
-      return item.AccountType != 'teacher' && item.AccountType != 'student';
-    });
-    this.setState({ filteredData });
-  }
-}
-
 export default class Users extends Component {
   constructor(props) {
     super(props);
@@ -149,15 +35,126 @@ export default class Users extends Component {
       deleteBtnDisabled: false,
       userToBeDeleted: null,
     };
-
-    getAllData = getAllData.bind(this);
-    deleteUser = deleteUser.bind(this);
-    performSearch = performSearch.bind(this);
-    filterData = filterData.bind(this);
+    this.filterData = this.filterData.bind(this);
   }
 
   componentDidMount() {
-    getAllData();
+    this.getAllData();
+  }
+
+  async deleteUser() {
+    this.setState({ deleteUserDialogState: false });
+    this.setState({ deleteBtnDisabled: true });
+
+    let id = this.state.userToBeDeleted;
+
+    const head = {
+      headers: {
+        authorization: `token ${config.ACCESS_TOKEN_ADMIN}`,
+      },
+      params: {
+        id,
+      },
+    };
+
+    await axios
+      .get(`${config.uri}/admin/deleteUser`, head)
+      .then((e) => {
+        if (e.data == 'success') {
+          alert('User Deleted Successfully!');
+          this.getAllData();
+        } else {
+          alert('Something went wrong, try again later!');
+        }
+        this.setState({ deleteBtnDisabled: false });
+      })
+      .catch((err) => {
+        this.setState({ deleteBtnDisabled: false });
+        alert('Network Error! Try again later...');
+      });
+  }
+
+  searchDebounce(txt) {
+    let timeout;
+    let delay = 300;
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      this.performSearch(txt);
+    }, delay);
+  }
+
+  performSearch(query) {
+    let txt = query.toLowerCase();
+    let filteredData = this.state.data.filter(function (item) {
+      return (
+        item.FullName.toLowerCase().includes(txt) ||
+        item.UserName.toLowerCase().includes(txt) ||
+        item.Email.toLowerCase().includes(txt) ||
+        item.Contact.toLowerCase().includes(txt) ||
+        item.Gender.toLowerCase().includes(txt) ||
+        item.AccountType.toLowerCase().includes(txt) ||
+        (item.Board && item.Board.toLowerCase().includes(txt)) ||
+        (item.Grade && item.Grade.toString().toLowerCase().includes(txt)) ||
+        item.CreatedOn.toLowerCase().includes(txt)
+      );
+    });
+    this.setState({ filteredData });
+  }
+
+  filterData() {
+    if (this.state.onlyTeacher && this.state.onlyStudent) {
+      let filteredData = this.state.data.filter(function (item) {
+        return item.AccountType == 'teacher' || item.AccountType == 'student';
+      });
+      this.setState({ filteredData });
+    } else if (this.state.onlyTeacher && !this.state.onlyStudent) {
+      let filteredData = this.state.data.filter(function (item) {
+        return item.AccountType == 'teacher';
+      });
+      this.setState({ filteredData });
+    } else if (!this.state.onlyTeacher && this.state.onlyStudent) {
+      let filteredData = this.state.data.filter(function (item) {
+        return item.AccountType == 'student';
+      });
+      this.setState({ filteredData });
+    } else {
+      let filteredData = this.state.data.filter(function (item) {
+        return item.AccountType != 'teacher' && item.AccountType != 'student';
+      });
+      this.setState({ filteredData });
+    }
+  }
+
+  async getAllData() {
+    this.setState({ loading: true, data: [], filteredData: [] });
+
+    const head = {
+      headers: {
+        authorization: `token ${config.ACCESS_TOKEN_ADMIN}`,
+      },
+    };
+
+    await axios
+      .get(`${config.uri}/admin/sendAllUsers`, head)
+      .then((e) => {
+        if (e.data.data.users) {
+          for (var i = 0, l = e.data.data.users.length; i < l; i++) {
+            let date = e.data.data.users[i].CreatedOn;
+            e.data.data.users[i].CreatedOn = new Date(
+              parseInt(date)
+            ).toUTCString();
+          }
+          this.setState({
+            data: e.data.data.users,
+            filteredData: e.data.data.users,
+          });
+        }
+        this.setState({ loading: false });
+      })
+      .catch((err) => {
+        this.setState({ loading: false });
+        alert('Network Error! Try again later...');
+      });
   }
 
   render() {
@@ -204,7 +201,7 @@ export default class Users extends Component {
               >
                 Cancel
               </Button>
-              <Button onClick={() => deleteUser()} autoFocus>
+              <Button onClick={() => this.deleteUser()} autoFocus>
                 Delete
               </Button>
             </DialogActions>
@@ -281,13 +278,15 @@ export default class Users extends Component {
         }}
       >
         {deleteUserDialog()}
-        {this.state.loading && <Loading />}
-        {!this.state.loading && (
+
+        {this.state.loading ? (
+          <Loading />
+        ) : (
           <div>
             <p style={styles.headerTxt}>Total Users</p>
             <div style={styles.searchContainer}>
               <TextField
-                onChange={(e) => searchDebounce(e.target.value)}
+                onChange={(e) => this.searchDebounce(e.target.value)}
                 size="small"
                 fullWidth
                 label="Search Users"
@@ -308,7 +307,7 @@ export default class Users extends Component {
                     defaultChecked
                     onChange={(e) => {
                       this.setState({ onlyTeacher: !this.state.onlyTeacher });
-                      setTimeout(filterData, 500);
+                      setTimeout(this.filterData, 500);
                     }}
                   />
                 }
@@ -320,7 +319,7 @@ export default class Users extends Component {
                     defaultChecked
                     onChange={(e) => {
                       this.setState({ onlyStudent: !this.state.onlyStudent });
-                      setTimeout(filterData, 500);
+                      setTimeout(this.filterData, 500);
                     }}
                   />
                 }
@@ -333,7 +332,7 @@ export default class Users extends Component {
                 columns={columns}
                 getRowId={(row) => row._id}
                 pageSize={100}
-                rowsPerPageOptions={[5]}
+                rowsPerPageOptions={[15, 50, 100]}
                 autoHeight={true}
                 disableSelectionOnClick
               />
